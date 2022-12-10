@@ -13,10 +13,10 @@
 
 <body>
   <header>
-    <button class="header__resetBtn btn--reset"><img src="./assets/refresh_white.svg" alt=""></button>
+    <button class="header__resetBtn btn--reset"  ><img id="reset" src="./assets/refresh_white.svg" alt=""></button>
     <span class="header__logo" >Wordle</span>
-    <button class="header__themeBtn btn--reset" onclick="DarkMode()">
-      <img src="./assets/dark_mode_white.svg" alt="">
+    <button class="header__themeBtn btn--reset"  onclick="DarkMode()">
+      <img id="mode" src="./assets/dark_mode_white.svg" alt="">
     </button>
   </header>
 
@@ -71,7 +71,7 @@
       </div>
     </div>
 
-    <div class="keyboard">
+    <div class="keyboard" >
       <div class="keyboard__row">
         <button id="key-q" class="key">Q</button>
         <button id="key-w" class="key">W</button>

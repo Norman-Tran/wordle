@@ -21,7 +21,7 @@ button {
 }
 
 /* COLOR & TYPOGRAPHY */
-
+/*Color Theme*/
 :root {
   /* Background */
   --dark-bg: #121213;
@@ -30,17 +30,31 @@ button {
   --green-correct: #538d4e;
   --yellow-present: #b59f3b;
   --dark-absent: #3a3a3c;
+   /* Borger */
+   --gray-border: #3a3a3c;
+   /*Text*/
+  --light-text: #ffffff;
+   
+}
+body.dark {
+  /* Background */
+  --dark-bg: #121213;
 
   /* Text */
   --light-text: #ffffff;
-
-  /* Borger */
-  --gray-border: #3a3a3c;
 }
 
-.dark-mode {
-  background-color: black;
-  color: white;
+
+body.light{
+  /*Background*/
+  --dark-bg: #ebebf0;
+ 
+  /*Text*/
+  --light-text: #121213;
+}
+
+.keyboard{
+  --light-text: #ffffff;
 }
 
 @font-face {
@@ -144,16 +158,19 @@ header {
 .tile--absent {
   border: none;
   background-color: var(--dark-absent);
+  color: #ffffff;
 }
 
 .tile--present {
   border: none;
   background-color: var(--yellow-present);
+  color: #ffffff;
 }
 
 .tile--correct {
   border: none;
   background-color: var(--green-correct);
+  color: #ffffff;
 }
 
 /* KEYBOARD */
@@ -258,3 +275,4 @@ header {
   animation-name: shake;
   animation-duration: 0.5s;
 }
+

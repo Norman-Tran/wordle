@@ -15,7 +15,8 @@
   <header>
     <button class="header__resetBtn btn--reset"  ><img id="reset" src="./assets/refresh_white.svg" alt=""></button>
     <span class="header__logo" >Wordle</span>
-    <button class="header__themeBtn btn--reset"  onclick="DarkMode()">
+
+    <button class="header__themeBtn btn--reset" onclick="switchTheme()"> 
       <img id="mode" src="./assets/dark_mode_white.svg" alt="">
     </button>
   </header>
@@ -113,12 +114,15 @@
     </div>
   </main>
 
-  <aside class="modal modal--hidden">
-    <button class="modal__closeIcon btn--reset">x</button>
-    <h1 class="modal__status">You win</h1>
-    <p class="modal__answer">The answer is AUDIO</p>
-    <div class="modal__stats"></div>
-    <button class="modal__pillBtn">New game</button>
+  <aside class="modal-container">
+    <div class="modal">
+      <button class="modal__close">
+        <img src="./assets/close_white.svg" alt="">
+      </button>
+      <h1 class="modal__status"></h1>
+      <p class="modal__answer"></p>
+      <button class="modal__reset">New game</button>
+    </div>
   </aside>
 </body>
 

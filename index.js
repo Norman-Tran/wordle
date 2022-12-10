@@ -171,10 +171,7 @@ function submitGuess() {
     addTilesAnimation();
 
     if (guessIsCorrect(result)) {
-      isWinning = true;
-      showWinningMessage();
-    //sử dụng key 'Reset' để quyết định tạo màn chơi mới khi đoán đúng, hết lượt hay load lại màn đang chơi dở 
-      window.localStorage.setItem('Reset',true)
+      handleWinning();
     } else {
       console.log("Guess is NOT correct");
 
@@ -183,8 +180,7 @@ function submitGuess() {
       currentTile = 0;
 
       if (gameIsOver()) {
-        showLosingMessage();
-        window.localStorage.setItem('Reset',true)
+        handleLosing();
       }
     }
   } else {
@@ -207,14 +203,18 @@ function gameIsOver() {
   return isWinning || currentRow > 5;
 }
 
-function showWinningMessage() {
+function handleWinning() {
+  isWinning = true;
   console.log("Guess is correct");
-  showModal();
+  //sử dụng key 'Reset' để quyết định tạo màn chơi mới khi đoán đúng, hết lượt hay load lại màn đang chơi dở
+  window.localStorage.setItem("Reset", true);
+  setTimeout(showModal, 2500);
 }
 
-function showLosingMessage() {
+function handleLosing() {
   console.log(`You lose! Keyword is ${keyword}`);
-  showModal();
+  window.localStorage.setItem("Reset", true);
+  setTimeout(showModal, 2500);
 }
 
 // -------------------------------------------------------------
@@ -302,6 +302,11 @@ function addTilesAnimation(row = currentRow) {
     tile.style.animationDelay = `${i / 3}s`;
     tile.style.transitionProperty = "background-color";
     tile.style.transitionDelay = `${i / 3}s`;
+
+    setTimeout(() => {
+      tile.removeAttribute("style");
+      tile.classList.remove("tile--flip");
+    }, 2500);
   }
   // Gợi ý: Thêm lớp tile--flip vào tile
 }
@@ -314,7 +319,6 @@ function addKeysColor(result, guessRow = guesses[currentRow]) {
   for (i = 0; i < 5; i++)
   {
     let key = document.getElementById('key-' + guessRow[i]);
-    console.log(key);
     if(isCorrect(result[i])) {
       key.classList.remove('key--absent');
       key.classList.remove('key--present');
@@ -344,17 +348,38 @@ function shakeTiles(row = currentRow) {
   for (let i = 0; i < 5; i++) {
     const tile = tiles[i];
     tile.classList.add("tile--shake");
+
+    setTimeout(() => {
+      tile.classList.remove("tile--shake");
+    }, 500);
   }
 }
 
 // -------------------------------------------------------------
 // MODAL
 
-const closeModalIcon = document.querySelector(".modal__closeIcon");
-closeModalIcon.addEventListener("click", hideModal());
+const modalContainer = document.querySelector(".modal-container");
+const modalCloseBtn = document.querySelector(".modal__close");
+const modalResetBtn = document.querySelector(".modal__reset");
 
-function showModal() {}
-function hideModal() {}
+function showModal() {
+  modalContainer.classList.add("modal--show");
+
+  const status = document.querySelector(".modal__status");
+  status.textContent = isWinning ? "You win" : "You lose";
+
+  const answer = document.querySelector(".modal__answer");
+  answer.textContent = `The answer is ${keyword.toUpperCase()}`;
+}
+
+[modalContainer, modalCloseBtn, modalResetBtn].forEach((element) => {
+  element.addEventListener("click", hideModal);
+});
+
+function hideModal() {
+  modalContainer.classList.remove("modal--show");
+  resetGame();
+}
 
 // -------------------------------------------------------------
 // REAL KEYBOARD
@@ -394,9 +419,53 @@ async function updateTargetWords() {
 }
 
 // -------------------------------------------------------------
+// RESET GAME
+
+const resetBtn = document.querySelector(".header__resetBtn");
+resetBtn.addEventListener("click", resetGame);
+
+function resetGame() {
+  // Clean board
+  const tileClasses = [
+    "tile--absent",
+    "tile--present",
+    "tile--correct",
+    "tile--flip",
+    "tile--shake",
+  ];
+
+  const tiles = document.querySelectorAll(".tile");
+  tiles.forEach((tile) => {
+    tile.classList.remove(...tileClasses);
+    tile.textContent = "";
+  });
+
+  // Clean keyboard
+  const keyClasses = ["key--absent", "key--present", "key--correct"];
+
+  const keys = document.querySelectorAll(".key");
+  keys.forEach((key) => {
+    key.classList.remove(...keyClasses);
+  });
+
+  newGame();
+  saveGameState();
+}
+
+// -------------------------------------------------------------
 // UTILS
 
+function startGame() {
+  //Nếu key 'Reset là false thì load lại màn đang chơi dở còn không thì tạo một keyword ngấu nhiên và bắt đầu màn chơi mới
+  if (JSON.parse(window.localStorage.getItem("Reset")) == false) {
+    loadLocalSave();
+  } else {
+    newGame();
+  }
+}
+
 function newGame() {
+  keyword = getRandomWord();
   guesses = [
     ["", "", "", "", ""],
     ["", "", "", "", ""],
@@ -408,13 +477,6 @@ function newGame() {
   currentRow = 0;
   currentTile = 0;
   isWinning = false;
-  //Nếu key 'Reset là false thì load lại màn đang chơi dở còn không thì tạo một keyword ngấu nhiên và bắt đầu màn chơi mới
-  if(JSON.parse(window.localStorage.getItem('Reset'))==false)
-  { 
-    loadLocalSave();
-  }else{
-    keyword = getRandomWord();
-  }
 }
 
 function getRandomWord() {
@@ -428,61 +490,43 @@ function randomItem(items) {
 (async function () {
   await updateDictionary();
   await updateTargetWords();
-  newGame();
+  startGame();
 })();
 
 
-/*Dark/Light mode*/
-function getUserPreference() {
-  return localStorage.getItem('theme') || 'system';
-}
-function saveUserPreference(userPreference) {
-  localStorage.setItem('theme', userPreference);
-}
+/*Dark mode*/
 
-
-function getAppliedMode(userPreference) {
-  if (userPreference === 'light') {
-    return 'light';
-  }
-  if (userPreference === 'dark') {
-    return 'dark';
-  }
- // system
-  if (matchMedia('(prefers-color-scheme: light)').matches) {
-    return 'light';
-  }
-  return 'dark';
-}
-
-const colorScheme = document.querySelector('meta[name="color-scheme"]');
-function setAppliedMode(mode) {
-  document.body.className = mode;
-  rotatePreferences(mode);
-}
-
-function rotatePreferences(userPreference) {
-  
-  if (userPreference === 'dark') {
-    iconMode.setAttribute('src',"./assets/dark_mode_white.svg");
-    iconReset.setAttribute('src',"./assets/refresh_white.svg");
-    return 'light';
-  }
-  if (userPreference === 'light') {
-    iconMode.setAttribute('src',"./assets/dark_mode_black.svg");
-    iconReset.setAttribute('src',"./assets/refresh_black.svg");
-    return 'dark';
-  }
-}
-
+const swithButton = document.getElementsByClassName('mode');
+const defualtLight =matchMedia('(prefers-color-scheme: light)').matches;
+let theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : (defualtLight ? "light" : "dark");
 const iconMode = document.getElementById("mode");
 const iconReset = document.getElementById("reset");
-let userPreference = getUserPreference();
-setAppliedMode(getAppliedMode(userPreference));
-
-function DarkMode() {
-  const newUserPref = rotatePreferences(userPreference);
-  userPreference = newUserPref;
-  saveUserPreference(newUserPref);
-  setAppliedMode(getAppliedMode(newUserPref));
+//Set theme theo hệ thống
+setTheme(theme);
+//Đổi giữa dark mode và light mode
+function switchTheme()
+{
+  theme = theme ==="light" ? "dark": "light";
+  localStorage.setItem("theme", theme);
+  setTheme(theme);
 }
+
+//Set lại theme sau khi thay đổi mode
+function setTheme (mode)
+{
+  if (mode === 'light')
+  {
+    document.body.classList.remove('dark'); 
+    document.body.classList.toggle('light');
+    iconMode.setAttribute('src',"./assets/dark_mode_black.svg");
+    iconReset.setAttribute('src',"./assets/refresh_black.svg");
+  }
+  if (mode === 'dark')
+  { 
+    document.body.classList.remove('light');
+    document.body.classList.toggle('dark');
+    iconMode.setAttribute('src',"./assets/dark_mode_white.svg");
+    iconReset.setAttribute('src',"./assets/refresh_white.svg");
+  }
+}
+

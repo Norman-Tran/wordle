@@ -1,5 +1,3 @@
-// -------------------------------------------------------------
-
 // guesses là một mảng có 6 phần từ
 // tương ứng với 6 lần mà người dùng nhập
 // lưu lại tiến trình chơi của người dùng
@@ -14,8 +12,6 @@ let guesses = [
   ["", "", "", "", ""],
   ["", "", "", "", ""],
 ];
-
-
 
 // gọi hàm getUserGuess lấy từ mà người dùng đoán dưới dạng chuỗi
 function getUserGuess(row = currentRow) {
@@ -372,7 +368,7 @@ function showModal() {
   answer.textContent = `The answer is ${keyword.toUpperCase()}`;
 }
 
-[modalContainer, modalCloseBtn, modalResetBtn].forEach((element) => {
+[modalCloseBtn, modalResetBtn].forEach((element) => {
   element.addEventListener("click", hideModal);
 });
 
@@ -389,7 +385,7 @@ function hideModal() {
 addEventListener("keyup",function(event){
 
   if(event.code  >= 'KeyA' && event.code  <= 'KeyZ')
-    addLetter(event.key);
+    addLetter(event.key.toLowerCase());
   else if (event.code == 'Enter')
     submitGuess();
   else if (event.code == 'Backspace')
@@ -496,9 +492,9 @@ function randomItem(items) {
 
 /*Dark mode*/
 
-const swithButton = document.getElementsByClassName('mode');
-const defualtLight =matchMedia('(prefers-color-scheme: light)').matches;
-let theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : (defualtLight ? "light" : "dark");
+const switchButton = document.getElementsByClassName('mode');
+const defaultLight =matchMedia('(prefers-color-scheme: light)').matches;
+let theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : (defaultLight ? "light" : "dark");
 const iconMode = document.getElementById("mode");
 const iconReset = document.getElementById("reset");
 //Set theme theo hệ thống
@@ -517,14 +513,14 @@ function setTheme (mode)
   if (mode === 'light')
   {
     document.body.classList.remove('dark'); 
-    document.body.classList.toggle('light');
-    iconMode.setAttribute('src',"./assets/dark_mode_black.svg");
+    document.body.classList.add('light');
+    iconMode.setAttribute('src',"./assets/light_mode_black.svg");
     iconReset.setAttribute('src',"./assets/refresh_black.svg");
   }
   if (mode === 'dark')
   { 
     document.body.classList.remove('light');
-    document.body.classList.toggle('dark');
+    document.body.classList.add('dark');
     iconMode.setAttribute('src',"./assets/dark_mode_white.svg");
     iconReset.setAttribute('src',"./assets/refresh_white.svg");
   }

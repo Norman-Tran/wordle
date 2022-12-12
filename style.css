@@ -102,9 +102,6 @@ main {
 
 aside {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 .board {
@@ -183,7 +180,6 @@ header {
 .keyboard__row {
   display: flex;
   justify-content: center;
-  touch-action: manipulation;
   gap: .25em;
 }
 
@@ -203,7 +199,6 @@ header {
   flex-basis: 0;
   text-transform: uppercase;
 
-  cursor: pointer;
   user-select: none;
 }
 
@@ -316,6 +311,7 @@ header {
   animation-name: flip;
   animation-duration: 1s;
 }
+
 .tile--shake {
   animation-name: shake;
   animation-duration: 0.5s;
